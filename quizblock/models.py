@@ -91,6 +91,13 @@ class Quiz(models.Model):
     def clear_user_submissions(self,user):
         Submission.objects.filter(user=user,quiz=self).delete()
 
+class QuizState(models.Model):
+    user = models.ForeignKey(User, related_name="quiz_user")
+    quiz = models.ForeignKey(Quiz)
+    state = models.TextField()
+    modified_date = models.DateTimeField()
+    
+
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz)
     text = models.TextField()
