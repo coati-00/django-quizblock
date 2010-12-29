@@ -1,8 +1,10 @@
-from models import Quiz, Question, Answer
+from models import Quiz, Question, Answer, Submission, Response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.utils import simplejson
+from django.contrib.auth.decorators import login_required
 
 class rendered_with(object):
     def __init__(self, template_name):
@@ -107,3 +109,21 @@ def edit_answer(request,id):
         answer.save()
         return HttpResponseRedirect(reverse("edit-answer",args=[answer.id]))
     return dict(answer=answer)
+
+@login_required
+def load_state(request, id):
+    doc = {}
+    quiz = get_object_or_404(Quiz,id=id)
+    submission = get_object_or_404(Submission,quiz=quiz, user=request.user)
+    try:
+        s = Submission.objects.get()
+        for response in s.response_set.all():
+            doc[response.question.id] = response.value
+    except Submission.DoesNotExist:
+        pass
+
+    json = simplejson.dumps(doc)
+    response = HttpResponse(json, 'application/json')
+    response['Cache-Control']='max-age=0,no-cache,no-store'
+    return response
+

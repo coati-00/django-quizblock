@@ -1,4 +1,7 @@
 from django.conf.urls.defaults import patterns
+import os.path
+
+media_root = os.path.join(os.path.dirname(__file__),"media")
 
 urlpatterns = patterns('quizblock.views',
                        (r'^edit_quiz/(?P<id>\d+)/$','edit_quiz',{},'edit-quiz'),
@@ -10,4 +13,5 @@ urlpatterns = patterns('quizblock.views',
                        (r'^reorder_questions/(?P<id>\d+)/$','reorder_questions',{},'reorder-questions'),
                        (r'^delete_answer/(?P<id>\d+)/$','delete_answer',{},'delete-answer'),
                        (r'^edit_answer/(?P<id>\d+)/$','edit_answer',{},'edit-answer'),
+                       (r'^load/(?P<id>\d+)/$','load_state',{},'load-state'),
 )

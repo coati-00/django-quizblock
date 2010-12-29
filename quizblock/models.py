@@ -21,14 +21,19 @@ class Quiz(models.Model):
         return unicode(self.pageblock())
 
     def needs_submit(self):
-        return not self.rhetorical
+        #return not self.rhetorical
+        return True
 
     def submit(self,user,data):
         """ a big open question here is whether we should
         be validating submitted answers here, on submission, 
         or let them submit whatever garbage they want and only
         worry about it when we show the admins the results """
-        s = Submission.objects.create(quiz=self,user=user)
+        if self.rhetorical:
+            s,created = Submission.objects.get_or_create(quiz=self,user=user)
+        else:
+            s = Submission.objects.create(quiz=self,user=user)
+            
         for k in data.keys():
             if k.startswith('question'):
                 qid = int(k[len('question'):])
@@ -37,16 +42,17 @@ class Quiz(models.Model):
                 # instead of a dict so we can use getlist()
                 if type(data[k]) == type([]):
                     for v in data[k]:
-                        response = Response.objects.create(
+                        response,created = Response.objects.get_or_create(
                             submission=s,
-                            question=question,
-                            value=v)
+                            question=question)
+                        response.value = v
+                        response.save()
                 else:
-                    response = Response.objects.create(
+                    response,created = Response.objects.get_or_create(
                         submission=s,
-                        question=question,
-                        value=data[k])
-
+                        question=question)
+                    response.value = data[k]
+                    response.save()
 
     def redirect_to_self_on_submit(self):
         return True
@@ -54,7 +60,10 @@ class Quiz(models.Model):
     def unlocked(self,user):
         # meaning that the user can proceed *past* this one,
         # not that they can access this one. careful.
-        return Submission.objects.filter(quiz=self,user=user).count() > 0
+        if self.rhetorical:
+            return len(self.question_set.all()) == Submission.objects.filter(quiz=self,user=user).count()
+        else:
+            return Submission.objects.filter(quiz=self,user=user).count() > 0
     
     def edit_form(self):
         class EditForm(forms.Form):
@@ -90,13 +99,6 @@ class Quiz(models.Model):
 
     def clear_user_submissions(self,user):
         Submission.objects.filter(user=user,quiz=self).delete()
-
-class QuizState(models.Model):
-    user = models.ForeignKey(User, related_name="quiz_user")
-    quiz = models.ForeignKey(Quiz)
-    state = models.TextField()
-    modified_date = models.DateTimeField()
-    
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz)
@@ -212,4 +214,3 @@ class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         exclude = ("question",)
-

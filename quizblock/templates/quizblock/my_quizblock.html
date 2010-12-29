@@ -1,29 +1,15 @@
-{% load markup %}
-{% load getresponse %}
-
-
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-    // Load the user's quiz responses if they exist
     loadUrl = 'http://' + location.hostname + ':' + location.port + "/activity/quiz/load/" + {{block.id}} + "/";
     jQuery.getJSON(loadUrl, function(data) {
         for (id in data) {
-            var name = "pageblock-{{block.pageblock.id}}-question" + id;
-            var element = jQuery('input[name="' + name + '"]')
-            if (element.is(':radio')) {
-                // check the right radio button
-                element = jQuery('input[name="' + name + '"][value="' + data[id] + '"]')
-                element.attr("checked", true);
-                jQuery("#q" + id).css("display", "block");
-            } else if (element.is(':checkbox')) {
-                //@todo -- take care of checkboxes.
-            } else {
-                //@todo -- take care of textareas
+            if (data[id] == "checked") {
+                jQuery("#choice"+id).attr("checked", true);
+                jQuery("#choice"+id).change();
             }
         }
     });
-    
 
     jQuery(":input").change(function(index) {
         if (jQuery(this).is(':checkbox') || jQuery(this).is(':radio')) {
@@ -46,7 +32,8 @@ jQuery(document).ready(function() {
 });
 </script>
 
-
+{% load markup %}
+{% load getresponse %}
 <style type="text/css">
 </style>
 {{ block.description|markdown }}
@@ -65,15 +52,15 @@ jQuery(document).ready(function() {
 
 		 {% if question.answerable %}
 		 {% if block.rhetorical %}
-                 <form id="form-{{question.id}}" method="post" action=".">
+                 <form id="form-{{question.id}}" method="post">
 		 {% endif %}
                        <ol type="A">
 			 {% for answer in question.answer_set.all %}
 			 {% if block.rhetorical %}
 			   {% if question.is_single_choice %}
-                             <li><input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.label}}" type="radio" />{{answer.label}}</li>
+                             <li><input name="question{{question.id}}" id="choice{{answer.id}}" value="{{answer.label}}" type="radio" />{{answer.label}}</li>
 			   {% else %}
-                             <li><input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.label}}" type="checkbox" />{{answer.label}}</li>
+                             <li><input name="question{{question.id}}" id="choice{{answer.id}}" value="{{answer.label}}" type="checkbox" />{{answer.label}}</li>
 			   {% endif %}
 			 {% else %}
 			    {% if question.is_single_choice %}
@@ -85,7 +72,8 @@ jQuery(document).ready(function() {
 {{answer.label}}
 {% endifequal %}
 {% else %}
-<input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.value}}" type="radio" />{{answer.label}}{% endif %}
+<input name="pageblock-{{block.pageblock.id}}-question{{question.id}}"
+       id="choice{{answer.id}}" value="{{answer.value}}" type="radio" />{{answer.label}}{% endif %}
 </li>
 			    {% else %}
 
@@ -108,7 +96,7 @@ response and more than one response by the user.
 
 {% else %}
 {% comment %}no response{% endcomment %}
-   <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.value}}" type="checkbox" />{{answer.label}}
+   <input id=choice{{answer.id}} name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.value}}" type="checkbox" />{{answer.label}}
 {% endif %}</li>
 			    {% endif %}
 			 {% endif %}
@@ -152,8 +140,7 @@ response and more than one response by the user.
 	   {% if question.is_single_choice %}
            <div class="casesanswerdisplay">
                  <div id="q{{question.id}}" style="display:none" class="answer">
-                 <p>{% if question.correct_answer_letter %}<i>The
-                 correct answer is
+                 <p>{% if question.correct_answer_letter %}<i>The correct answer is
                  {{question.correct_answer_letter}}:</i>{% endif %} {{question.explanation|markdown}}</p>
                  </div>
            </div>
@@ -200,4 +187,4 @@ response and more than one response by the user.
 
 {% if block.rhetorical %}
 <script src="http://mt.ccnmtl.columbia.edu/pedialabs/js/quizshow.js" type="text/javascript" language="javascript"></script>
-{% endif %}	
+{% endif %}
