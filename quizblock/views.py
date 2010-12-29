@@ -1,4 +1,4 @@
-from models import Quiz, Question, Answer, Submission, Response
+from models import *
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
@@ -114,10 +114,11 @@ def edit_answer(request,id):
 def load_state(request, id):
     doc = {}
     quiz = get_object_or_404(Quiz,id=id)
-    submission = get_object_or_404(Submission,quiz=quiz, user=request.user)
+    
     try:
-        s = Submission.objects.get()
-        for response in s.response_set.all():
+        submission = Submission.objects.get(quiz=quiz, user=request.user)
+    
+        for response in submission.response_set.all():
             doc[response.question.id] = response.value
     except Submission.DoesNotExist:
         pass

@@ -24,7 +24,6 @@ jQuery(document).ready(function() {
         }
     });
     
-
     jQuery(":input").change(function(index) {
         if (jQuery(this).is(':checkbox') || jQuery(this).is(':radio')) {
             if (jQuery(this).attr("checked")) {
@@ -40,6 +39,17 @@ jQuery(document).ready(function() {
                 });
 
                 jQuery("#q" + questionId).css("display", "block");
+
+                // is our next section unlocked now?
+                var next_section_slug = jQuery("#next_section_slug").val();
+                loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
+                jQuery.getJSON(loadUrl, function(data) {
+                    for (section_slug in data) {
+                        jQuery("#span_" + section_slug).css("display", "none");
+                        jQuery("#" + section_slug).css("display", "inline");   
+                    }
+                });
+                 
             }
         }
     });

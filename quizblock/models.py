@@ -61,7 +61,8 @@ class Quiz(models.Model):
         # meaning that the user can proceed *past* this one,
         # not that they can access this one. careful.
         if self.rhetorical:
-            return len(self.question_set.all()) == Submission.objects.filter(quiz=self,user=user).count()
+            s = Submission.objects.filter(quiz=self,user=user)
+            return s.count() > 0 and len(self.question_set.all()) == len(s[0].response_set.all())
         else:
             return Submission.objects.filter(quiz=self,user=user).count() > 0
     
