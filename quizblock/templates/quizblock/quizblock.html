@@ -3,6 +3,19 @@
 
 
 <script type="text/javascript">
+
+    function maybeUnlockNextSection() {
+       // is our next section unlocked now?
+       var next_section_slug = jQuery("#next_section_slug").val();
+       loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
+       jQuery.getJSON(loadUrl, function(data) {
+          for (section_slug in data) {
+             jQuery("#span_" + section_slug).css("display", "none");
+             jQuery("#" + section_slug).css("display", "inline");   
+          }
+       });
+    }
+
 jQuery(document).ready(function() {
 
     // Load the user's quiz responses if they exist
@@ -23,6 +36,8 @@ jQuery(document).ready(function() {
             }
         }
     });
+
+    maybeUnlockNextSection();
     
     jQuery(":input").change(function(index) {
         if (jQuery(this).is(':checkbox') || jQuery(this).is(':radio')) {
@@ -40,16 +55,7 @@ jQuery(document).ready(function() {
 
                 jQuery("#q" + questionId).css("display", "block");
 
-                // is our next section unlocked now?
-                var next_section_slug = jQuery("#next_section_slug").val();
-                loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
-                jQuery.getJSON(loadUrl, function(data) {
-                    for (section_slug in data) {
-                        jQuery("#span_" + section_slug).css("display", "none");
-                        jQuery("#" + section_slug).css("display", "inline");   
-                    }
-                });
-                 
+                maybeUnlockNextSection();
             }
         }
     });
@@ -162,9 +168,9 @@ response and more than one response by the user.
 	   {% if question.is_single_choice %}
            <div class="casesanswerdisplay">
                  <div id="q{{question.id}}" style="display:none" class="answer">
-                 <p>{% if question.correct_answer_letter %}<i>The
+                 <p>{% if question.correct_answer_letter %}<b>The
                  correct answer is
-                 {{question.correct_answer_letter}}:</i>{% endif %} {{question.explanation|markdown}}</p>
+                 {{question.correct_answer_letter}}:</b>{% endif %} {{question.explanation|markdown}}</p>
                  </div>
            </div>
 	   {% endif %}
