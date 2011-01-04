@@ -1,0 +1,45 @@
+{% load markup %}
+{% load getresponse %}
+
+<div id="video">
+
+{{ block.description|markdown }}
+
+{% for question in block.question_set.all %}
+    {% getquestionresponse question as response %}
+
+    <div class="cases">
+        {{question.intro_text|markdown}}
+    
+        {% comment %}<div class="casetitle"> Question {{question.display_number|add:"1"}}:</div>{% endcomment %}
+     
+        <div class="casecontent">
+            <div class="casequestion">
+                {{question.text|markdown}}
+    
+                <form id="form-{{question.id}}" method="post" action="{{request.get_full_path}}">
+                    <ol type="A">
+                        {% for answer in question.answer_set.all %}
+                             <li>
+                                <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
+                                {{answer.label}}
+                                <div id="answer_video{{answer.id}}" style="display: none">{{answer.video|safe}}</div> 
+                             </li>
+                        {% endfor %}
+                    </ol>
+                </form>
+            </div>
+        </div>
+        <div class="casesanswerdisplay">
+            <div id="q{{question.id}}" style="display:none" class="answer">
+            <p>
+                {% if question.correct_answer_letter %}
+                    <b>The correct answer is {{question.correct_answer_letter}}:</b>
+                {% endif %} 
+                {{question.explanation|markdown}}
+            </p>
+        </div>
+    </div>
+{% endfor %}
+
+</div>

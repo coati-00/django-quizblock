@@ -10,6 +10,7 @@ class AnswerInlineForm(forms.ModelForm):
         model = Answer
         widgets = { 
            'label': forms.Textarea(attrs={'rows': 1 }),
+           'video': forms.Textarea(attrs={'rows': 2 }),
         }
 
 class AnswerInlineAdmin(admin.TabularInline):
@@ -19,6 +20,7 @@ class AnswerInlineAdmin(admin.TabularInline):
     template = 'admin/quizblock/answer/edit_inline/tabular.html'
     widgets = { 
            'label': forms.Textarea(attrs={'rows': 1 }),
+           'video': forms.Textarea(attrs={'rows': 2 }),
     }
     
     def change_view(self, request, object_id, extra_context=None):
@@ -35,7 +37,7 @@ class QuestionAdmin(admin.ModelAdmin):
         (None, {
             'fields': ( )
         }),
-        ('All Question Properties', {
+        ('Edit Question Properties', {
             'classes': ('collapse',),
             'fields': ('question_type', 'intro_text', 'text', 'explanation')
         }),

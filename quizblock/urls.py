@@ -15,3 +15,8 @@ urlpatterns = patterns('quizblock.views',
                        (r'^edit_answer/(?P<id>\d+)/$','edit_answer',{},'edit-answer'),
                        (r'^load/(?P<id>\d+)/$','load_state',{},'load-state'),
 )
+
+urlpatterns += patterns('',
+                        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': media_root}),
+)
+                       
