@@ -9,7 +9,6 @@
         
         jQuery(":input").change(function(index) {
             var questionId = storeState(jQuery(this));
-            
         });
     });
 </script>
@@ -39,6 +38,7 @@
 		 {% if block.rhetorical %}
                  <form id="form-{{question.id}}" method="post" action="{{request.get_full_path}}">
 		 {% endif %}
+                 <div id='question-{{question.display_number|add:"1"}}'>
                        <ol type="A">
 			 {% for answer in question.answer_set.all %}
 			 {% if block.rhetorical %}
@@ -87,6 +87,7 @@ response and more than one response by the user.
 			 {% endfor %}
                       </ol>
                  {% if block.rhetorical %}
+                    </div>
                  </form>
 		 {% endif %}
 		 {% else %}
