@@ -27,11 +27,11 @@ from setuptools import setup
 
 setup(
     name="quizblock",
-    version="0.1",
+    version="2.0",
     author="Anders Pearson",
     author_email="anders@columbia.edu",
     url="",
-    description="Basic Quiz PageBlock",
+    description="Basic Quiz PageBlock -- tuned for tobaccocessation release",
     long_description="Basic Quiz PageBlocks (see django-pagetree and django-pageblocks)",
     install_requires = [],
     scripts = [],

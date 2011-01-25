@@ -188,7 +188,12 @@ class Answer(models.Model):
       
     def edit_form(self,request=None):
         return AnswerForm(request,instance=self)
-
+    
+    def display_letter(self):
+        alpha = ord('A')
+        order = self._order
+        letter = chr(alpha + order)
+        return letter
 
 class Submission(models.Model):
     quiz = models.ForeignKey(Quiz)

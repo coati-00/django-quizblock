@@ -1,6 +1,21 @@
 {% load markup %}
 {% load getresponse %}
 
+<script type="text/javascript">
+   jQuery(document).ready(function() {
+        jQuery("#answer_submit").click(function(index) {
+            // verify the user has selected something.
+            var checkedElement = jQuery("input:radio:checked");
+            if (checkedElement.length < 1) {
+                alert("Please select an answer before clicking submit.");
+                return false;
+            } else {
+                return true;
+            }
+        });
+    });
+</script>
+
 <div id="video">
 
 {{ block.description|markdown }}
@@ -12,32 +27,49 @@
         {{question.intro_text|markdown}}
     
         {% comment %}<div class="casetitle"> Question {{question.display_number|add:"1"}}:</div>{% endcomment %}
-     
+        
         <div class="casecontent">
             <div class="casequestion">
                 {{question.text|markdown}}
-    
-                <form id="form-{{question.id}}" method="post" action="{{request.get_full_path}}">
-                    <ol type="A">
+                <form id="form-{{question.id}}" method="post" action=".">
+                    <div class="video" id='question-{{question.display_number|add:"1"}}'>
+                        <div class="answer_video">
+                            {% for answer in question.answer_set.all %}
+                                <div id="answer_video{{answer.id}}" style="display: none;" class="answer_video_selected">
+                                    <center>{% spaceless %}{{answer.video|safe}}{% endspaceless %}</center>
+                                </div>
+                            {% endfor %}
+                        </div>   
+                        
                         {% for answer in question.answer_set.all %}
-                             <li>
+                            <div class="answer_text">
                                 <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
-                                {{answer.label}}
-                                <div id="answer_video{{answer.id}}" style="display: none">{{answer.video|safe}}</div> 
-                             </li>
+                                <b>{{answer.display_letter}}.</b> {{answer.label}}
+                            </div>
                         {% endfor %}
-                    </ol>
+                    </div>
+                    
+                    <div id="answer_controls">
+                        <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
+                    </div>
                 </form>
             </div>
         </div>
-        <div class="casesanswerdisplay">
-            <div id="q{{question.id}}" style="display:none" class="answer">
-            <p>
-                {% if question.correct_answer_letter %}
-                    <b>The correct answer is {{question.correct_answer_letter}}:</b>
-                {% endif %} 
-                {{question.explanation|markdown}}
-            </p>
+        
+        <div id="q{{question.id}}" class="answer" style="display:none">
+                {% getquestionresponse question as response %}
+                {% if response %}
+                    {% ifequal response.value|upper question.correct_answer_letter %}
+                        <div class="correct">Correct</div>
+                        <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}} too! Nice work!</b>
+                    {% else %}
+                        <div class="incorrect">Incorrect</div>
+                        <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}}. Oops!</b>
+                    {% endifequal %}
+                    
+                {% endif %}
+            
+            {{question.explanation|markdown}}
         </div>
     </div>
 {% endfor %}
