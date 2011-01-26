@@ -27,7 +27,7 @@ from setuptools import setup
 
 setup(
     name="quizblock",
-    version="2.0",
+    version="tobaccocessation",
     author="Anders Pearson",
     author_email="anders@columbia.edu",
     url="",
