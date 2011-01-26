@@ -23,7 +23,6 @@
 {% for question in block.question_set.all %}
     {% getquestionresponse question as response %}
 
-    <div class="cases">
         {{question.intro_text|markdown}}
     
         {% comment %}<div class="casetitle"> Question {{question.display_number|add:"1"}}:</div>{% endcomment %}
@@ -33,31 +32,39 @@
                 {{question.text|markdown}}
                 <form id="form-{{question.id}}" method="post" action=".">
                     <div class="video" id='question-{{question.display_number|add:"1"}}'>
-                        <div class="answer_video">
+                        <table>
+                        <tr><td>
                             {% for answer in question.answer_set.all %}
-                                <div id="answer_video{{answer.id}}" style="display: none;" class="answer_video_selected">
-                                    <center>{% spaceless %}{{answer.video|safe}}{% endspaceless %}</center>
+                                <div class="answer_text">
+                                    {% if response %}
+                                        {% ifequal question.correct_answer_letter answer.display_letter %}
+                                            <img style="float: right" src="/activity/quiz/media/img/correct.png" />
+                                        {% else %}
+                                            <img style="float: right" align="middle" src="/activity/quiz/media/img/incorrect.png" />
+                                        {% endifequal %}
+                                    {% endif %}
+                                    <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
+                                    <b>{{answer.display_letter}}.</b> {{answer.label}}
                                 </div>
                             {% endfor %}
-                        </div>   
-                        
-                        {% for answer in question.answer_set.all %}
-                            <div class="answer_text">
-                                <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
-                                <b>{{answer.display_letter}}.</b> {{answer.label}}
+                            <div id="answer_controls">
+                                <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
                             </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <div id="answer_controls">
-                        <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
+                            
+                        </td><td class="answer_video">
+                                {% for answer in question.answer_set.all %}
+                                    <div id="answer_video{{answer.id}}" style="display: none;" class="answer_video_selected">
+                                        <center>{% spaceless %}{{answer.video|safe}}{% endspaceless %}</center>
+                                    </div>
+                                {% endfor %}
+                        </td></tr>
+                        </table>
                     </div>
                 </form>
             </div>
         </div>
         
         <div id="q{{question.id}}" class="answer" style="display:none">
-                {% getquestionresponse question as response %}
                 {% if response %}
                     {% ifequal response.value|upper question.correct_answer_letter %}
                         <div class="correct">Correct</div>
@@ -71,7 +78,7 @@
             
             {{question.explanation|markdown}}
         </div>
-    </div>
+    
 {% endfor %}
 
 </div>

@@ -1,25 +1,15 @@
-#answer_controls
+#video table, tr, td
 {
-    clear: both;
-}
-
-#answer_submit
-{
-    float: left;
-    background-color: #333333;
-    color: #FFF;
-    font-size: 84%;
-    width: 245px;
-    text-align: center;
-    height: 30px;
+    border: none;
 }
 
 .answer_text
 {
-    width: 235px;
+    width: 245px;
     vertical-align: top;
     font-size: 90%;
     margin-bottom: 8px;
+    margin-right: 6px;
     padding: 4px;
     border: 1px solid black;
 }
@@ -31,21 +21,28 @@
 
 .answer_video
 {
-    float: right;
-    height: 400px;
     width: 490px;
+    height: 100%;
     background-color: #E1E1E1;
-    padding-top: 65px;
+    vertical-align: center;
     text-align: center;
-    
-    background-image: url(../img/video-background.png);
-    background-position: center middle;
-    background-repeat: no-repeat;
 }
 
-.answer_video_selected
+#answer_controls
 {
-    border: none;
+    width: 256px;
+    vertical-align: top;
+    font-size: 90%;
+}
+
+#answer_submit
+{
+    background-color: #333333;
+    color: #FFF;
+    font-size: 84%;
+    width: 100%;
+    text-align: center;
+    height: 30px;
 }
 
 .correct
