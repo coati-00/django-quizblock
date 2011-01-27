@@ -39,7 +39,7 @@ class QuestionAdmin(admin.ModelAdmin):
         }),
         ('Edit Question Properties', {
             'classes': ('collapse',),
-            'fields': ('question_type', 'intro_text', 'text', 'explanation')
+            'fields': ('question_type', 'intro_text', 'text', 'explanation', 'video')
         }),
     )
     
@@ -49,12 +49,13 @@ class QuestionModelForm(forms.ModelForm):
    class Meta:
         model = Question
         widgets = { 
-           'text': forms.Textarea(attrs={'rows': 1 }),
-           'explanation': forms.Textarea(attrs={'rows': 1 }),
-           'intro_text': forms.Textarea(attrs={'rows': 1 }), 
+           'text': forms.Textarea(attrs={'rows': 1, 'cols': 25 }),
+           'explanation': forms.Textarea(attrs={'rows': 1, 'cols': 25 }),
+           'intro_text': forms.Textarea(attrs={'rows': 1, 'cols': 25 }),
+           'video': forms.Textarea(attrs={'rows': 1, 'cols': 25 }), 
         }
         
-        fields = ('question_type', 'intro_text', 'text', 'explanation')
+        fields = ('question_type', 'intro_text', 'text', 'explanation', 'video')
   
 class QuestionInlineAdmin(admin.TabularInline):
     form = QuestionModelForm

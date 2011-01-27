@@ -45,16 +45,30 @@
     height: 30px;
 }
 
+.question_video
+{
+    width: 100%;
+    background-color: #E1E1E1;
+    align: center;
+}
+
+.singlevideo_answer_text
+{
+    border: 1px solid black; 
+    margin: 5px; 
+    padding: 5px;
+}
+
 .correct
 {
     font-size: 120%;
-    color: #00FF00;
+    color: #006600;
     font-weight: bold;
 }
 
 .incorrect
 {
     font-size: 120%;
-    color: #FF0000;
+    color: #C00000;
     font-weight: bold;
 }

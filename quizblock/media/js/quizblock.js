@@ -10,8 +10,14 @@ function maybeUnlockNextSection() {
    });
 }
 
-function hasVideo() {
-    return jQuery("#video").length > 0; 
+function hasMultipleVideos() {
+    // Video associated with each answer
+    return jQuery("#multivideo").length > 0; 
+}
+
+function hasSingleVideo() {
+    // Video associated with question
+    return jQuery("#singlevideo").length > 0; 
 }
 
 function loadState(blockId, pageblockId) {
@@ -34,21 +40,23 @@ function loadState(blockId, pageblockId) {
                 // show the correct answer
                 jQuery("#q" + id).css("display", "block");
                                 
-                if (hasVideo()) {
+                if (hasMultipleVideos()) {
                     // display video and begin playback
                     var answer_video_id = "#answer_video" + checkedElement.attr("id");
                     jQuery(answer_video_id).css("display", "inline");
                     
                     // show the selected element
                     checkedElement.parent().addClass("answer_text_selected");
-                    jQuery("#answer_controls").show();
+                    jQuery("#answer_submit").hide();
+                } else if (hasSingleVideo()) {
+                    checkedElement.parent().addClass("answer_text_selected");
                     jQuery("#answer_submit").hide();
                 }
             }
         }
         
         // If no items are selected, show all items.
-        if (count < 1 && hasVideo()) {
+        if (count < 1 && (hasMultipleVideos() || hasSingleVideo())) {
             jQuery(":radio").attr("checked", false);
         }
     });
@@ -77,13 +85,18 @@ function storeState(element) {
             jQuery("#q" + questionId).css("display", "block");
             
             // update the "you answered" section
-            if (hasVideo()) {
+            if (hasMultipleVideos()) {
                 jQuery("#submitted_answer").html("<b>You answered " + element.val().toUpperCase() + "</b><br />");
             }
         }
     }
     
     return questionId;
+}
+
+function showSelected(element) {
+    jQuery(".singlevideo_answer_text").removeClass("answer_text_selected");
+    element.parent().addClass("answer_text_selected");
 }
 
 function showVideo(element) {

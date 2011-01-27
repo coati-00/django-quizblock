@@ -101,7 +101,13 @@ class Quiz(models.Model):
     def clear_user_submissions(self,user):
         Submission.objects.filter(user=user,quiz=self).delete()
         
-    def has_video(self):
+    def question_has_video(self):
+        for question in self.question_set.all():
+            if len(question.video) > 0:
+                return True
+        return False    
+        
+    def answers_have_video(self):
         for question in self.question_set.all():
             for answer in question.answer_set.all():
                 if len(answer.video) > 0:
@@ -119,6 +125,7 @@ class Question(models.Model):
                                               ))
     explanation = models.TextField(blank=True)
     intro_text = models.TextField(blank=True)
+    video = models.TextField(blank=True, null=True)
     
     class Meta:
         ordering = ('quiz',)

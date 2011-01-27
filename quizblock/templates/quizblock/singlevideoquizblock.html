@@ -1,0 +1,77 @@
+{% load markup %}
+{% load getresponse %}
+
+<script type="text/javascript">
+   jQuery(document).ready(function() {
+        jQuery("#answer_submit").click(function(index) {
+            // verify the user has selected something.
+            var checkedElement = jQuery("input:radio:checked");
+            if (checkedElement.length < 1) {
+                alert("Please select an answer before clicking submit.");
+                return false;
+            } else {
+                return true;
+            }
+        });
+    });
+</script>
+
+<div id="singlevideo">
+
+{{ block.description|markdown }}
+
+{% for question in block.question_set.all %}
+    {% getquestionresponse question as response %}
+
+        {{question.intro_text|markdown}}
+    
+        <div class="casecontent">
+            <div class="casequestion">
+                {{question.text|markdown}}
+                
+                <div class="question_video">
+                    <center>{% spaceless %}{{question.video|safe}}{% endspaceless %}</center>
+                </div>
+                <br />
+                        
+                <form id="form-{{question.id}}" method="post" action=".">
+                    {% for answer in question.answer_set.all %}
+                        <div class="singlevideo_answer_text">
+                            {% if response %}
+                                <span>
+                                {% ifequal question.correct_answer_letter answer.display_letter %}
+                                    <img src="/activity/quiz/media/img/correct.png" />
+                                {% else %}
+                                    <img src="/activity/quiz/media/img/incorrect.png" />
+                                {% endifequal %}
+                                </span>
+                            {% endif %}
+                            <input name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
+                            <b>{{answer.display_letter}}.</b> {{answer.label}}
+                        </div>
+                    {% endfor %}
+                    <div id="answer_controls">
+                        <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div id="q{{question.id}}" class="answer" style="display:none">
+                {% if response %}
+                    {% ifequal response.value|upper question.correct_answer_letter %}
+                        <div class="correct">Correct</div>
+                        <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}} too! Nice work!</b>
+                    {% else %}
+                        <div class="incorrect">Incorrect</div>
+                        <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}}. Oops!</b>
+                    {% endifequal %}
+                    
+                {% endif %}
+            
+            {{question.explanation|markdown}}
+        </div>
+    
+{% endfor %}
+
+</div>

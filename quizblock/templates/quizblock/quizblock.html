@@ -6,8 +6,10 @@
         loadState({{block.id}}, {{block.pageblock.id}});
         
         jQuery(":input").change(function(index) {
-            if (hasVideo()) {
+            if (hasMultipleVideos()) {
                 showVideo(jQuery(this));     
+            } else if (hasSingleVideo()) {
+                showSelected(jQuery(this));
             } else {
                 storeState(jQuery(this));
             } 
@@ -15,8 +17,10 @@
     });
 </script>
 
-{% if block.has_video %}
-    {% include "quizblock/videoquizblock.html" %}
+{% if block.question_has_video %}
+    {% include "quizblock/singlevideoquizblock.html" %}
+{% else %} {% if block.answers_have_video %}
+    {% include "quizblock/multivideoquizblock.html" %}
 {% else %}
 
 {% load markup %}
@@ -173,4 +177,4 @@ response and more than one response by the user.
 </div> 
 {% endfor %}
 
-{% endif %}
+{% endif %}{% endif %}
