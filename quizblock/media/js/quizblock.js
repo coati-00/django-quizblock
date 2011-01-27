@@ -1,13 +1,15 @@
 function maybeUnlockNextSection() {
    // is our next section unlocked now?
    var next_section_slug = jQuery("#next_section_slug").val();
-   var loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
-   jQuery.getJSON(loadUrl, function(data) {
-      for (section_slug in data) {
-         jQuery("#span_" + section_slug).css("display", "none");
-         jQuery("#" + section_slug).css("display", "inline");   
-      }
-   });
+   if (next_section_slug != undefined) {
+       var loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
+       jQuery.getJSON(loadUrl, function(data) {
+          for (section_slug in data) {
+             jQuery("#span_" + section_slug).css("display", "none");
+             jQuery("#" + section_slug).css("display", "inline");   
+          }
+       });
+   }
 }
 
 function hasMultipleVideos() {
