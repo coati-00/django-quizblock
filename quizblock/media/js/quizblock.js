@@ -41,25 +41,7 @@ function loadState(blockId, pageblockId) {
                 
                 // show the correct answer
                 jQuery("#q" + id).css("display", "block");
-                                
-                if (hasMultipleVideos()) {
-                    // display video and begin playback
-                    var answer_video_id = "#answer_video" + checkedElement.attr("id");
-                    jQuery(answer_video_id).css("display", "inline");
-                    
-                    // show the selected element
-                    checkedElement.parent().addClass("answer_text_selected");
-                    jQuery("#answer_submit").hide();
-                } else if (hasSingleVideo()) {
-                    checkedElement.parent().addClass("answer_text_selected");
-                    jQuery("#answer_submit").hide();
-                }
             }
-        }
-        
-        // If no items are selected, show all items.
-        if (count < 1 && (hasMultipleVideos() || hasSingleVideo())) {
-            jQuery(":radio").attr("checked", false);
         }
     });
     
@@ -85,38 +67,8 @@ function storeState(element) {
 
             // show the "correct" answer block
             jQuery("#q" + questionId).css("display", "block");
-            
-            // update the "you answered" section
-            if (hasMultipleVideos()) {
-                jQuery("#submitted_answer").html("<b>You answered " + element.val().toUpperCase() + "</b><br />");
-            }
         }
     }
     
     return questionId;
-}
-
-function showSelected(element) {
-    jQuery(".singlevideo_answer_text").removeClass("answer_text_selected");
-    element.parent().addClass("answer_text_selected");
-}
-
-function showVideo(element) {
-    // hide any videos that are currently playing
-    // stop the video?
-    jQuery(".answer_text").removeClass("answer_text_selected");
-    jQuery(":radio").each(function(index) {
-        // hide all other videos
-        if (jQuery(this).attr("id") != element.attr("id")) {
-            var answer_video_id = "#answer_video" + jQuery(this).attr("id");
-            if (jQuery(answer_video_id)) 
-                jQuery(answer_video_id).css("display", "none");
-        }
-    });
-    
-    // display video and begin playback
-    var answer_video_id = "#answer_video" + element.attr("id");
-    jQuery(answer_video_id).css("display", "inline");
-    element.parent().addClass("answer_text_selected");
-    jQuery("#answer_controls").show();
 }

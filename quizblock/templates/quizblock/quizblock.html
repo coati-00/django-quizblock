@@ -3,14 +3,12 @@
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
-        loadState({{block.id}}, {{block.pageblock.id}});
+        if (!hasMultipleVideos() && !hasSingleVideo()) {
+            loadState({{block.id}}, {{block.pageblock.id}});
+        }
         
         jQuery(":input").change(function(index) {
-            if (hasMultipleVideos()) {
-                showVideo(jQuery(this));     
-            } else if (hasSingleVideo()) {
-                showSelected(jQuery(this));
-            } else {
+            if (!hasMultipleVideos() && !hasSingleVideo()) {
                 storeState(jQuery(this));
             } 
         });
