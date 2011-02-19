@@ -1,6 +1,34 @@
 {% load markup %}
 {% load getresponse %}
 
+<script type="text/javascript">
+   jQuery(document).ready(function() {
+        jQuery("#answer_submit").click(function(index) {
+            // verify the user has selected something.
+            var checkedElement = jQuery("input:radio:checked");
+            if (checkedElement.length < 1) {
+                alert("Please select an answer before clicking submit.");
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        jQuery(".answer_value").click(function(index) {
+            // uncheck any checked
+            if (jQuery("input:radio:checked").length > 1)
+                jQuery("input:radio:checked").attr("checked", false);
+            
+            // check mine
+            var hiddenRadioButton = jQuery(this).children("input:radio");
+            hiddenRadioButton.attr("checked", true);
+
+            jQuery(".answer_value").removeClass("answer_value_selected");
+            jQuery(this).addClass("answer_value_selected");
+        });
+    });
+</script>
+
 <div id="singlevideo">
 
 {{ block.description|markdown }}
@@ -13,15 +41,15 @@
         <div class="casecontent">
             <div class="casequestion">
                 {{question.text|markdown}}
-                
-                {% if response %}
+                        
+                {% if response %}        
                     <div class="answer_feedback">
                         {% ifequal response.value|upper question.correct_answer_letter %}
                             <div class="correct">Correct</div>
-                            <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}} too! Nice work!</b>
+                            <b>The correct answer is: {{question.correct_answer_letter}}. You are right! Nice work!</b>
                         {% else %}
                             <div class="incorrect">Incorrect</div>
-                            <b>The correct answer was: {{question.correct_answer_letter}}. You chose {{response.value|upper}}. Oops!</b>
+                            <b>The correct answer is: {{question.correct_answer_letter}}. You chose {{response.value|upper}}. Oops!</b>
                         {% endifequal %}
                         
                         {{question.explanation|markdown}}
@@ -29,41 +57,48 @@
                     <br />
                 {% endif %}
                 
-                <div class="singlevideo_question">
+                <div class="singlevideo_question_video">
                     <center>{% spaceless %}{{question.video|safe}}{% endspaceless %}</center>
                 </div>
                 <br />
                         
-                {% for answer in question.answer_set.all %}
-                    <form method="post" action=".">
-                        <table border="0">
-                        <tr border="0" {% if not response %} class="answer_row" {% endif %}>
-                        <td style="vertical-align: top; padding: 5px;">
-                           {% if response %}
-                                {% ifequal question.correct_answer_letter answer.display_letter %}
-                                    <div class="answer_value" style="background-color: #008800">{{answer.value|upper}}</div>
-                                {% else %}
-                                    <div class="answer_value" style="background-color: #E00000">{{answer.value|upper}}</div>
-                                {% endifequal %}
-                                {% ifequal response.value|upper answer.value|upper %}
-                                    <input type="submit" class="answer_submit"  value="Selected" disabled="disabled"/>
-                                {% endifequal %}                                
-                            {% else %}
-                                <input type="hidden" name="pageblock-{{block.pageblock.id}}-question{{question.id}}" value="{{answer.value|upper}}"/>
-                                <div class="answer_value" onclick='jQuery("#{{question.id}}_{{answer.id}}_submit").click();'>{{answer.value|upper}}</div>
-                                <input id="{{question.id}}_{{answer.id}}_submit" type="submit" class="answer_submit"  value="Select"/>                                
-                            {% endif %}
-                        </td>
-                        <td class="singlevideo_answer_text">
-                            {{answer.label}}
-                        </td>
-                        </tr>
+                <form id="form-{{question.id}}" method="post" action=".">
+                    {% for answer in question.answer_set.all %}
+                        <table>
+                            <tr class="singlevideo_answer_row">
+                                <td style="vertical-align: top">
+                                    {% if response %}
+                                        {% ifequal question.correct_answer_letter answer.display_letter %}
+                                            <div class="answer_value" style="background-color: #008800;">{{answer.value|upper}}</div>
+                                        {% else %}
+                                            <div class="answer_value" style="background-color: #E00000;">{{answer.value|upper}}</div>
+                                        {% endifequal %}
+                                        {% ifequal response.value|upper answer.value|upper %}
+                                            <div class="submitted">Submitted</div>
+                                        {% endifequal %}
+                                    {% else %}
+                                        <div class="answer_value">
+                                            <input style="display: none" name="pageblock-{{block.pageblock.id}}-question{{question.id}}" id="{{answer.id}}" value="{{answer.value}}" type="radio" />
+                                            {{answer.display_letter}}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td style="vertical-align: top">
+                                    <div class="singlevideo_answer_text">
+                                        {{answer.label}}
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
-                    </form>
-                {% endfor %}
-                
+                    {% endfor %}
+                    {% if not response %}
+                        <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
+                    {% endif %}
+                </form>
             </div>
         </div>
+
+    
 {% endfor %}
 
 </div>

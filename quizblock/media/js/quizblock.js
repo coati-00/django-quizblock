@@ -12,18 +12,12 @@ function maybeUnlockNextSection() {
    }
 }
 
-function hasMultipleVideos() {
+function hasVideo() {
     // Video associated with each answer
-    return jQuery("#multivideo").length > 0; 
-}
-
-function hasSingleVideo() {
-    // Video associated with question
-    return jQuery("#singlevideo").length > 0; 
+    return jQuery("#multivideo").length > 0 || jQuery("#singlevideo").length > 0; 
 }
 
 function loadState(blockId, pageblockId) {
-    
     // Load the user's quiz responses if they exist
     var loadUrl = 'http://' + location.hostname + ':' + location.port + "/activity/quiz/load/" + blockId + "/";
     jQuery.getJSON(loadUrl, function(data) {
@@ -71,4 +65,24 @@ function storeState(element) {
     }
     
     return questionId;
+}
+
+function showVideo(element) {
+    // hide any videos that are currently playing
+    // stop the video?
+    jQuery(".answer_text").removeClass("answer_text_selected");
+    jQuery(":radio").each(function(index) {
+        // hide all other videos
+        if (jQuery(this).attr("id") != element.attr("id")) {
+            var answer_video_id = "#answer_video" + jQuery(this).attr("id");
+            if (jQuery(answer_video_id)) 
+                jQuery(answer_video_id).css("display", "none");
+        }
+    });
+    
+    // display video and begin playback
+    var answer_video_id = "#answer_video" + element.attr("id");
+    jQuery(answer_video_id).css("display", "inline");
+    element.parent().addClass("answer_text_selected");
+    jQuery("#answer_controls").show();
 }
