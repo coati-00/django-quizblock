@@ -132,7 +132,7 @@ class Question(models.Model):
         order_with_respect_to = 'quiz'
 
     def __unicode__(self):
-        return self.text
+        return self.text[:75]
       
     def display_number(self):
         return self._order
