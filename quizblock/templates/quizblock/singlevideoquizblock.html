@@ -66,7 +66,7 @@
                     {% for answer in question.answer_set.all %}
                         <table>
                             <tr class="singlevideo_answer_row">
-                                <td style="vertical-align: top">
+                                <td style="vertical-align: top; width: 100px; padding-bottom: 8px;">
                                     {% if response %}
                                         {% ifequal question.correct_answer_letter answer.display_letter %}
                                             <div class="answer_value" style="background-color: #008800;">{{answer.value|upper}}</div>
