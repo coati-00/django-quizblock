@@ -1,12 +1,14 @@
 function maybeUnlockNextSection() {
    // is our next section unlocked now?
    var next_section_slug = jQuery("#next_section_slug").val();
-   if (next_section_slug != undefined) {
+   if (next_section_slug !== undefined) {
        var loadUrl = 'http://' + location.hostname + ':' + location.port + "/main/accessible/" + next_section_slug + "/";
-       jQuery.getJSON(loadUrl, function(data) {
+       jQuery.getJSON(loadUrl, { "noCache":  new Date().getTime() }, function(data) {
           for (section_slug in data) {
              jQuery("#span_" + section_slug).css("display", "none");
-             jQuery("#" + section_slug).css("display", "inline");   
+             jQuery("#next_disabled").css("display", "none");
+             jQuery("#" + section_slug).css("display", "inline");
+             jQuery("#next").css("display", "inline");
           }
        });
    }
@@ -27,10 +29,10 @@ function loadState(blockId, pageblockId) {
         for (id in data) {
             count++;
             var name = "pageblock-" + pageblockId + "-question" + id;
-            var element = jQuery('input[name="' + name + '"]')
+            var element = jQuery('input[name="' + name + '"]');
             if (element.is(':radio')) {
                 // check the right radio button
-                var checkedElement = jQuery('input[name="' + name + '"][value="' + data[id] + '"]')
+                var checkedElement = jQuery('input[name="' + name + '"][value="' + data[id] + '"]');
                 checkedElement.attr("checked", true);
                 
                 // show the correct answer
@@ -53,11 +55,11 @@ function storeState(element) {
                 type: "POST",
                 url: jQuery("#form-" + questionId).attr("action"),
                 data: serializedData, 
-                success: function() {},
-                error: function() {},
+                success: function() {
+                    maybeUnlockNextSection();
+	            },
+                error: function() {}
             });
-
-            maybeUnlockNextSection();
 
             // show the "correct" answer block
             jQuery("#q" + questionId).css("display", "block");
