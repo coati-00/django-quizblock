@@ -2,8 +2,11 @@ from models import Quiz, Question, Answer, Response, Submission
 from django.contrib import admin
 from django import forms
 
-admin.site.register(Response)
-admin.site.register(Submission)
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'quiz', 'submitted')
+    search_fields = ['user__username', 'user__first_name']
+
+admin.site.register(Submission, SubmissionAdmin)
 
 class AnswerInlineForm(forms.ModelForm):
    class Meta:

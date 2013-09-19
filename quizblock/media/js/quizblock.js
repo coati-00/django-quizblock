@@ -46,7 +46,7 @@ function loadState(blockId, pageblockId) {
 
 function storeState(element) {
     if (element.is(':checkbox') || element.is(':radio')) {
-        if (element.attr("checked")) {
+        if (jQuery(element).is(":checked")) {
             var pattern = /\d*$/g
             var questionId = element.attr("name").match(pattern)[0];
             var serializedData = jQuery("#form-" + questionId).serialize();
