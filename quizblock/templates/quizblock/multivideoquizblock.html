@@ -16,8 +16,10 @@
             }
         });
 
-        jQuery(".answer_value").click(function(index) {
-            // uncheck any checked
+        jQuery(".answer_value").click(function(event) {
+	    event.stopPropagation();
+            
+	    // uncheck any checked
             if (jQuery("input:radio:checked").length > 1)
                 jQuery("input:radio:checked").attr("checked", false);
             
@@ -32,6 +34,7 @@
             
             jQuery(".answer_row").removeClass("answer_row_selected");
             jQuery(this).parents(".answer_row").addClass("answer_row_selected");
+            return false;
         });
 
         jQuery(".answer_row").click(function(index) {
