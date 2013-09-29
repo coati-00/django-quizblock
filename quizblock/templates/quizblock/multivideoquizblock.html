@@ -3,12 +3,17 @@
 
 <script type="text/javascript">
    jQuery(document).ready(function() {
-        jQuery("input:radio").attr("checked", false);
+        jQuery("input:radio").prop("checked", false);
        
         jQuery("#answer_submit").click(function(index) {
             // verify the user has selected something.
-            var checkedElement = jQuery("input:radio:checked");
-            if (checkedElement.length < 1) {
+            var checkedElement = false;
+            jQuery("input:radio").each(function() {
+                if (jQuery(this).prop("checked")) {
+                    checkedElement = true;
+                } 
+            });
+            if (!checkedElement) {
                 alert("Please select an answer before clicking submit.");
                 return false;
             } else {
@@ -17,15 +22,18 @@
         });
 
         jQuery(".answer_value").click(function(event) {
-	    event.stopPropagation();
+            event.stopPropagation();
             
-	    // uncheck any checked
-            if (jQuery("input:radio:checked").length > 1)
-                jQuery("input:radio:checked").attr("checked", false);
+            // uncheck any checked
+            jQuery("input:radio").each(function() {
+                if (jQuery(this).prop("checked")) {
+                    jQuery(this).prop("checked", false);
+                }
+            });
             
             // check mine
             var hiddenRadioButton = jQuery(this).parent().children("input:radio");
-            hiddenRadioButton.attr("checked", true);
+            hiddenRadioButton.prop("checked", true);
             showVideo(hiddenRadioButton);
 
             // add selection classes
@@ -128,7 +136,7 @@
                             <input type="submit" id="answer_submit" name="submit{{question.id}}" value="Submit Answer" />
                         {% endif %}
                         
-                        </form>
+                </form>
             </div>
         </div>
 
