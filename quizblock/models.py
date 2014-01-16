@@ -228,7 +228,7 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         exclude = ("quiz",)
-        fields = ('question_type', 'intro_text', 'text', 'explanation')
+        fields = ('question_type', 'intro_text', 'text', 'explanation', 'video')
         
 class AnswerForm(forms.ModelForm):
     class Meta:
